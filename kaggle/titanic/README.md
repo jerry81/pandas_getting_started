@@ -16,3 +16,29 @@
 4.  boilerplate code - import numpy and pandas, read in data
 5.  explore data - df.loc[Sex=='female']["Survived"] - gets rows that match the filter - by sum(women)/len(women) finds % of women who survived
 6.  build random forest model
+  - construct 100 trees, individually consider each passengers' data and vote on whether individual survived
+  - randomForestClassifier imported from sklearn.ensemble
+7.  output to csv with 2 columns
+  - passengerId
+  - survived
+
+## TILs
+
+- get_dummies() - converts categorical values into numeric indicator columns (one-hot encoding)
+
+- scikit-learn (sklearn) - the go-to py lib for classical ML
+  - preprocessing
+  - models - linear, logistic regression, decision trees, random forests, SVM, k-NN, clustering
+  - evaluation - accuracy, precision/recall, ROC-AUC, confusion matrix, cross-validation
+  - pipelines - chain preprocessing + model
+  - model tuning
+
+- random forest - ensemble method that constructs multiple decision trees and outputs the mode of their predictions
+  - called ensemble method because it combines predictions from multiple models to improve accuracy and reduce overfitting
+  - 2 random aspects - random rows picked to construct tree, trees deliberately randomized to be different from e/o
+  - each level, a column is chosen and one threshold or value is split on
+    - sexM 1, age < 14 etc
+  - each node ends up with a yes/no match, so boolean
+  - always produces prediction tree for each row
+  - binary tree
+  - each tree only contains a random subset of columns, capturing a slightly different "view" of what predicts survival
