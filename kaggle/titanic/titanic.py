@@ -3,6 +3,7 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
 train_data = pd.read_csv('data/train.csv')
+test_data = pd.read_csv('data/test.csv')
 
 women = train_data.loc[train_data.Sex == 'female']["Survived"]
 rate_women = sum(women)/len(women)
@@ -12,3 +13,17 @@ men = train_data.loc[train_data.Sex == 'male']["Survived"]
 rate_men = sum(men)/len(men)
 
 print("% of men who survived:", rate_men)
+
+from sklearn.ensemble import RandomForestClassifier
+
+y = train_data["Survived"]
+features = ["Pclass", "Sex", "SibSp", "Parch"]
+x = pd.get_dummies(train_data[features])
+x_test = pd.get_dummies(test_data[features])
+
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
+model.fit(x, y)
+predictions = model.predict(x_test)
+output = pd.DataFrame({'PassengerId': test_data.PassengerId, 'Survived': predictions})
+output.to_csv('my_submission.csv', index=False)
+print("Your submission was successfully saved!")
