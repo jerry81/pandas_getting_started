@@ -24,6 +24,13 @@
 
 ## TILs
 
+- loc usage
+```
+women = train_data.loc[train_data.Sex == 'female']["Survived"]
+```
+- first brackets - filter, second brackets - select column
+- best pratice - put all the row slectors before the column selectors
+
 - get_dummies() - converts categorical values into numeric indicator columns (one-hot encoding)
 
 - scikit-learn (sklearn) - the go-to py lib for classical ML
