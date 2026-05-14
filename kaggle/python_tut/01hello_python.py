@@ -26,3 +26,10 @@ a,b = b,a
 print(1,2,3, sep=' < ')
 
 help(round)
+
+### conditionals ###
+### til conditional assignment
+
+total_candies = 1
+
+print("Splitting", total_candies, "candy" if total_candies == 1 else "candies")
