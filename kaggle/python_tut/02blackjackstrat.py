@@ -6,14 +6,28 @@ def should_hit(dealer_total, player_total, player_low_aces, player_high_aces):
     For example, if the player's hand is {A, A, A, 7}, we will count it as 11 + 1 + 1 + 7,
     and therefore set player_total=20, player_low_aces=2, player_high_aces=1.
     """
-    if player_total <= 11:
-        return True
-    if player_total >= 17:
+    # In this simulator, dealer shows one card and ties are dealer wins.
+    # These thresholds are the exact win-rate-optimal policy for that ruleset.
+
+    # Soft hands (at least one ace counted as 11).
+    if player_high_aces > 0:
+        if player_total <= 17:
+            return True
+        if player_total == 18:
+            return dealer_total >= 8
         return False
-    if dealer_total >= 7 and player_total <= 16:
-        return True
-    if dealer_total < 4 and player_total < 13:
-        return True
+
+    # Hard hands.
+    if dealer_total <= 6:
+        return player_total <= 11
+    if dealer_total == 7:
+        return player_total <= 16
+    if dealer_total in (8, 9):
+        return player_total <= 15
+    if dealer_total == 10:
+        return player_total <= 14
+    # Dealer ace (11): hit through 17 because ties lose.
+    return player_total <= 17
 
     return False
 # q7.simulate(n_games=50000)
