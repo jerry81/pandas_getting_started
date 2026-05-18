@@ -33,3 +33,10 @@ print(1,2,3 sep=' < ')
 def greet(who="Colin"):
     print("Hello " + who)
 ```
+
+## lists
+
+- get index of a item in list
+- l.index("item")
+- if item doesn't exist, it throws an error
+
