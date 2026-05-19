@@ -40,3 +40,33 @@ def greet(who="Colin"):
 - l.index("item")
 - if item doesn't exist, it throws an error
 
+## loops
+- looping lists
+```py
+  for item in list:
+    print(item)
+```
+- looping with index
+```py
+  for i in range(len(list)):
+    print(i, list[i])
+```
+- TIL: list comprehension
+```py
+short_planets = [planet for planet in planets if len(planet) < 6]
+```
+- like "where" in SQL
+- list comprehension like Select from where in sql
+- the above compreshension is equivalent to
+```py
+short_planets = []
+for planet in planets:
+    if len(planet) < 6:
+        short_planets.append(planet)
+```
+- TIL: "any"
+- the following returns true if any of the numbers satisfies the condition
+```py
+def has_lucky_number(nums):
+    return any([num % 7 == 0 for num in nums])
+```
