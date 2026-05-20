@@ -70,3 +70,24 @@ for planet in planets:
 def has_lucky_number(nums):
     return any([num % 7 == 0 for num in nums])
 ```
+
+## strings and dicts
+- triple quotes like markdown
+- print("", end="") - to avoid new line
+- join syntax
+```py
+"separator".join(list_of_strings)
+```
+- format syntax
+```py
+"{} is a {}".format("Earth", "planet")
+```
+- curly brackets to declare dictionaries
+- access with [], so same syntax as javascript
+- "in" to check if key exists in dict
+```py
+planets = {"Mercury": 0.39, "Venus": 0.72, "Earth": 1.00, "Mars": 1.52}
+"Earth" in planets # True
+```
+- keys() and values() to get collection of keys and values
+- items() to get collection of key value pairs
