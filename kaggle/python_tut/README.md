@@ -91,3 +91,23 @@ planets = {"Mercury": 0.39, "Venus": 0.72, "Earth": 1.00, "Mars": 1.52}
 ```
 - keys() and values() to get collection of keys and values
 - items() to get collection of key value pairs
+
+## external libraries
+
+- importable libs have type "module"
+- inspect module with dir(libname)
+- sometimes there are namespace conflicts
+```py
+from math import *
+from numpy import *
+print(pi, log(32,2))
+```
+- to avoid this, import with alias
+```py
+import math as m
+import numpy as np
+print(m.pi, m.log(32,2))
+```
+
+- special names starting with 2 underscores - used for overloading operators
+
