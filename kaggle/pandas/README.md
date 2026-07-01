@@ -64,3 +64,11 @@ lambda p: p - review_points_mean
 ```
 - apply(fn, axis='index|columns') - transform DF, columnns - transforms each row,
 index -> transforms each column
+
+- idxmax() - returns index of max value in column
+- "vectorized" arithmetic
+```
+ratio = reviews["points"] / reviews["price"]
+```
+- .str - special pandas accessor - apply string operations
+- str.contains()
