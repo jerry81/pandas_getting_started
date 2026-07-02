@@ -72,3 +72,29 @@ ratio = reviews["points"] / reviews["price"]
 ```
 - .str - special pandas accessor - apply string operations
 - str.contains()
+
+# grouping and sorting
+
+- groupby() - split-apply-combine
+```
+reviews.groupby('points').price.min()
+```
+- this snippet groups the reviews by points, and then finds the minimum price for each group
+```
+reviews.groupby(['country', 'province']).apply(lambda df: df.title.iloc[0])
+```
+- this snippet groups the reviews by country and province, and then applies a function to each group
+- results in a multi-index
+- multi-index must be indexed by a tuple of values, in the order of the groupby columns
+- multi-index can be reset to a normal index using reset_index()
+```
+reviews.groupby('country').price.agg([len, min, max])
+```
+- this snippet groups the reviews by country, and then applies multiple aggregation functions to the price column
+- agg() - can take a list of functions, or a dict of column names to functions
+- .sort_values(by='column_name', ascending=True|False) - sorts the DF by the specified column
+- sort_index() - sorts the DF by the index
+```
+countries_reviewed.sort_values(by=['country', 'province'], ascending=[True, False])
+```
+- this snippet sorts the countries_reviewed DF by country in ascending order, and then by province in descending order
