@@ -98,3 +98,25 @@ reviews.groupby('country').price.agg([len, min, max])
 countries_reviewed.sort_values(by=['country', 'province'], ascending=[True, False])
 ```
 - this snippet sorts the countries_reviewed DF by country in ascending order, and then by province in descending order
+
+## exercise
+
+```
+reviews_written = reviews.groupby("taster_twitter_handle").taster_twitter_handle.count()
+```
+- notice group_by returns object of type DataFrameGroupBy, which is not a DF, but can be transformed into one using aggregation functions like count(), mean(), etc.
+- the dataframegroupby offers accessors to columns
+
+```
+best_rating_per_price = reviews.groupby("price").points.max()
+```
+- this snippet groups the reviews by price, and then finds the maximum points for each group
+
+```
+
+- what does "'method' object is not subscriptable mean"?
+- means you used square brackets instead of round
+```
+country_variety_counts = reviews.groupby(['country', 'variety']).size().sort_values(ascending=False)
+```
+- size() used to get the size of each group, returns a series with a multi-index
