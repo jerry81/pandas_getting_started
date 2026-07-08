@@ -179,3 +179,37 @@ A single column is a Series.
 values = counts
 index = unique region names from region_1 (plus "Unknown" if filled)
 ```
+
+# renaming and combining
+
+- syntax to rename column(s)
+```
+reviews.rename(columns={'points': 'score', 'price': 'cost'}, inplace=True)
+```
+- can also rename default indexes
+```
+reviews.rename(index={0: 'firstEntry', 1: 'secondEntry'})
+```
+- rename entire axises
+```
+reviews.rename_axis("wines", axis='rows').rename_axis("fields", axis='columns')
+```
+
+## combining
+
+- you can combine two dataframes using concat(), join() <-- used when common index is available (also multiindex)
+- concat syntax
+```py
+canadian_youtube = pd.read_csv("../input/youtube-new/CAvideos.csv")
+british_youtube = pd.read_csv("../input/youtube-new/GBvideos.csv")
+
+pd.concat([canadian_youtube, british_youtube])
+```
+- lsuffix and rsuffix can be used to avoid column name conflicts
+
+```py
+left = canadian_youtube.set_index(['title', 'trending_date'])
+right = british_youtube.set_index(['title', 'trending_date'])
+
+left.join(right, lsuffix='_CAN', rsuffix='_UK')
+```
