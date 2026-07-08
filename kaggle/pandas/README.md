@@ -112,11 +112,70 @@ best_rating_per_price = reviews.groupby("price").points.max()
 ```
 - this snippet groups the reviews by price, and then finds the maximum points for each group
 
-```
 
 - what does "'method' object is not subscriptable mean"?
 - means you used square brackets instead of round
-```
+```py
 country_variety_counts = reviews.groupby(['country', 'variety']).size().sort_values(ascending=False)
 ```
 - size() used to get the size of each group, returns a series with a multi-index
+
+
+# data types and missing values
+
+- dtypes - returns a series with the data types of each column
+- converting column data type
+```py
+reviews.points.astype('float64')
+```
+
+## finding missing values
+
+- the following gets the rows where a column has missing values
+```py
+reviews[pd.isnull(reviews.country)]
+```
+- to replace missing values
+```py
+reviews.country.fillna("Unknown", inplace=True)
+```
+- to replace non-null value
+```py
+reviews.taster_twitter_handle.replace("@kerinokeefe", "@kerino")
+```
+
+## exercise
+
+- got error
+```
+
+ValueError: The truth value of a DataFrame is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+
+```
+- this error occurs when you try to use a DataFrame in a boolean context, such as an if statement or a logical operation. A DataFrame can have multiple rows and columns, so it is not clear what the truth value of the entire DataFrame should be. To resolve this, you can use methods like .empty, .any(), or .all() to check specific conditions on the DataFrame.
+
+- so we use .sum() to count the number of True values in the boolean DataFrame, which gives us a single integer value that can be used in a boolean context.
+- this
+```
+n_missing_prices = reviews.price.isnull().sum()
+```
+- is equivalent to
+```
+n_missing_prices = len(reviews[pd.isnull(reviews.price)])
+```
+
+- the following snippet counts the number of reviews per region, filling in missing values with 'Unknown' before counting
+```
+reviews_per_region = reviews.region_1.fillna('Unknown').value_counts().sort_values(ascending=False)
+```
+
+- explanation
+```
+reviews is a DataFrame.
+reviews.region_1 picks one column from that DataFrame.
+A single column is a Series.
+.fillna("Unknown") keeps it a Series.
+.value_counts() returns a new Series:
+values = counts
+index = unique region names from region_1 (plus "Unknown" if filled)
+```
