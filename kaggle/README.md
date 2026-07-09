@@ -39,3 +39,32 @@ red=1,0,0
 blue=0,1,0
 green=0,0,1
 ```
+
+# learning path
+
+- python course done
+- intro to ML done
+- pandas done
+- Intermediate ML
+- Feature Engineering
+- Data Visualization
+- Intro to SQL
+- Linear Regression
+- Logistic Regression
+- Decision Trees
+- Random Forests
+- Gradient Boosting
+- Bias vs Variance
+- Overfitting
+- Regularization
+- Cross Validation
+- Precision/Recall/F1
+- ROC-AUC
+
+Phase 3: Complete Kaggle Projects
+
+Phase 4: Deep Learning
+
+Phase 5: LLM
+
+Phase 6: AI Apps
