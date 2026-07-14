@@ -45,3 +45,97 @@ preds_test = model.predict(final_X_test)
 # Check your answers
 step_4.b.check()
 ```
+
+- quick review
+- first step: identify inputs and output
+- inputs - one ore more columns - (size + bedrooms + age)
+- output - one column (price)
+- inputs = X = features
+- output = y = target
+- train_x, train_y splits training data into the features and the target
+- fit() - given ML model, call fit pass in train_x and train_y to "learn" from the data - in case of RF, actually builds the forest
+- predict() - given trained ML model, predict runs the model on new data to make predictions
+- valid_x - could be the original data split into training and validation
+- predict called on valid_x results compared to valid_y
+- test_x test_y -> same as valid, but test_y is not known, so we cannot compare predictions to actual values
+
+- steps in order
+1.  load data
+2.  split into train and valid
+3.  create model
+4.  fit with trainX, trainY
+5.  prdedict with validX
+6.  compare predictions to validY, i.e. mean_absolute_error(validY, predictions)
+
+# categorical Variables
+
+- takes limited num of values (like enum?)
+- problem - these variables give error without preprocessing first
+- dealing with Categorical data
+  1. drop directly
+  2.  ordinal encoding
+    - assign each "value" a number
+    - better when there is clear ordering
+  3.  one-hot encoding
+    - create a new column for each value, with 1 or 0 indicating presence of that value
+    - caveat: bad for when there exist a large number of possible values
+- tutorial shows how to identify categorical variables: check type, look for type "object"
+  - in pandas string columns end up with column type object
+
+- impl of method 1
+```
+drop_X_train = X_train.select_dtypes(exclude=['object'])
+```
+- impl of method 2: needs scikit-learn
+```py
+from sklearn.preprocessing import OrdinalEncoder
+
+# Make copy to avoid changing original data
+label_X_train = X_train.copy()
+label_X_valid = X_valid.copy()
+
+# Apply ordinal encoder to each column with categorical data
+ordinal_encoder = OrdinalEncoder()
+label_X_train[object_cols] = ordinal_encoder.fit_transform(X_train[object_cols])
+label_X_valid[object_cols] = ordinal_encoder.transform(X_valid[object_cols])
+```
+- impl of method 3: also uses scikit-learn
+
+```py
+from sklearn.preprocessing import OneHotEncoder
+
+# Apply one-hot encoder to each column with categorical data
+OH_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+OH_cols_train = pd.DataFrame(OH_encoder.fit_transform(X_train[object_cols]))
+OH_cols_valid = pd.DataFrame(OH_encoder.transform(X_valid[object_cols]))
+
+# One-hot encoding removed index; put it back
+OH_cols_train.index = X_train.index
+OH_cols_valid.index = X_valid.index
+
+# Remove categorical columns (will replace with one-hot encoding)
+num_X_train = X_train.drop(object_cols, axis=1)
+num_X_valid = X_valid.drop(object_cols, axis=1)
+
+# Add one-hot encoded columns to numerical features
+OH_X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
+OH_X_valid = pd.concat([num_X_valid, OH_cols_valid], axis=1)
+
+# Ensure all columns have string type
+OH_X_train.columns = OH_X_train.columns.astype(str)
+OH_X_valid.columns = OH_X_valid.columns.astype(str)
+
+```
+q. what's the difference between ordinal_encoder.fit_transform and transform?
+
+a.  the fit refers to learning what possible values need to be encoded, and the transform refers to actually doing the encoding.  The fit_transform does both in one step, while transform only does the encoding based on a previously fitted encoder.
+a. given the block
+
+label_X_train[object_cols] = ordinal_encoder.fit_transform(X_train[object_cols])
+label_X_valid[object_cols] = ordinal_encoder.transform(X_valid[object_cols])
+
+the first line is just doing the fit first and then transform the second line since the model is already trained, can just do transform alone both X_... dataframes are transformed the same
+```
+
+- note that method 3 requires dropping original CV columns and inserting the encoded ones back
+- method 2, since it only involves a single column, replaces the column
