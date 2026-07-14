@@ -139,3 +139,72 @@ the first line is just doing the fit first and then transform the second line si
 
 - note that method 3 requires dropping original CV columns and inserting the encoded ones back
 - method 2, since it only involves a single column, replaces the column
+
+## exercise 3
+- impl method 1
+
+```py
+drop_X_train =X_train.select_dtypes(exclude=['object'])
+drop_X_valid = X_valid.select_dtypes(exclude=['object'])
+```
+
+- ran a check on unique values for Condition2 col
+- results are
+```
+Unique values in 'Condition2' column in training data: ['Norm' 'PosA' 'Feedr' 'PosN' 'Artery' 'RRAe']
+
+Unique values in 'Condition2' column in validation data: ['Norm' 'RRAn' 'RRNn' 'Artery' 'Feedr' 'PosN']
+```
+
+- the training and validation data have different possible values for the categorical variable, which means ordinal_encoder.fit_transform() followed by just fit() like in our lesson will fail
+
+- use list arithmetic to identify "bad" columns
+
+```
+object_cols = [col for col in X_train.columns if X_train[col].dtype == "object"]
+
+# Columns that can be safely ordinal encoded
+good_label_cols = [col for col in object_cols if
+                   set(X_valid[col]).issubset(set(X_train[col]))]
+
+# Problematic columns that will be dropped from the dataset
+bad_label_cols = list(set(object_cols)-set(good_label_cols))
+```
+
+- next is the exercise
+```
+# Drop categorical columns that will not be encoded
+label_X_train = X_train.drop(bad_label_cols, axis=1)
+label_X_valid = X_valid.drop(bad_label_cols, axis=1)
+
+# Apply ordinal encoder
+ordinal_encoder = OrdinalEncoder()
+label_X_train[good_label_cols] = ordinal_encoder.fit_transform(label_X_train[good_label_cols])
+label_X_valid[good_label_cols] = ordinal_encoder.transform(label_X_valid[good_label_cols])
+```
+
+- next the exercise lists number of possible values for each CV
+- they reinforce that the large number of possible values is not suitable for one-hot encoding due to greatly expanding the data
+
+- next exercise is to implement one-hot encoding
+
+
+```
+from sklearn.preprocessing import OneHotEncoder
+
+# Use as many lines of code as you need!
+
+one_hot_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+OH_cols_train = pd.DataFrame(one_hot_encoder.fit_transform(X_train[low_cardinality_cols]))
+OH_cols_valid = pd.DataFrame(one_hot_encoder.transform(X_valid[low_cardinality_cols]))
+OH_cols_train.index=X_train.index
+OH_cols_valid.index=X_valid.index
+num_X_train = X_train.drop(low_cardinality_cols,axis=1)
+num_X_valid = X_valid.drop(low_cardinality_cols,axis=1)
+num_X_train2 = num_X_train.drop(high_cardinality_cols, axis=1)
+num_X_valid2 = num_X_valid.drop(high_cardinality_cols, axis=1)
+OH_X_train = pd.concat([num_X_train2, OH_cols_train], axis=1)
+OH_X_valid = pd.concat([num_X_train2, OH_cols_valid], axis=1)
+# Check your answer
+step_4.check()
+```
