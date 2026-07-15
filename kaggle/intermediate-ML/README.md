@@ -208,3 +208,64 @@ OH_X_valid = pd.concat([num_X_train2, OH_cols_valid], axis=1)
 # Check your answer
 step_4.check()
 ```
+
+# pipelines
+
+- way to keep preprocessing and modeling code organized
+- bundles the two steps so you can use them as a single step
+- reasons to use
+  - cleaner code
+  - less bugs
+  - productionalize
+  - opts for model validations
+
+- example X_train with NaNs and categorical vars
+- steps
+  1.  define preprocessing steps
+    - impute missing values in numerical
+    - impute missing values and applie one-hot coding to categorical
+  2. define model i.e. instantiate a RandomForestRegressor
+  3.  create and evaluate pipe
+    - the pipe may include a preprocessing pipe (nested pipe), and includes model
+
+- impl of step 1 involves sklearn's SimpleImputer and OneHotEncoder and Pipeline
+```py
+numerical_transformer = SimpleImputer(strategy='constant')
+
+# Preprocessing for categorical data
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numerical_transformer, numerical_cols),
+        ('cat', categorical_transformer, categorical_cols)
+    ])
+```
+
+- impl of step 2
+```py
+model = RandomForestRegressor(n_estimators=100, random_state=0)
+```
+
+- impl of step 3
+```py
+from sklearn.metrics import mean_absolute_error
+
+# Bundle preprocessing and modeling code in a pipeline
+my_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                              ('model', model)
+                             ])
+
+# Preprocessing of training data, fit model
+my_pipeline.fit(X_train, y_train)
+
+# Preprocessing of validation data, get predictions
+preds = my_pipeline.predict(X_valid)
+
+# Evaluate the model
+score = mean_absolute_error(y_valid, preds)
+print('MAE:', score)
+```
