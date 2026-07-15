@@ -269,3 +269,30 @@ preds = my_pipeline.predict(X_valid)
 score = mean_absolute_error(y_valid, preds)
 print('MAE:', score)
 ```
+
+## exercise pipelines
+
+- drops missing values filtering on salePrice column
+- then sets that column to y and removes the column from x (with drop)
+- train_test_split called
+- extracts categorical variables by using the dtype == "object" check
+- extracts numerical cols by using the dtype in ["int64", "float64"] check
+- combines categorical and numerical cols into a single my_cols DF
+
+- then in next block,
+- simpleImputer made for numerical data, pipeline made with simpleimputer plus a onehotencoder (for categorical)
+- ColumnTransformer instantiated with transformers set to the simpleimputer and the pipeline
+  - the transofmers are tuples with
+    - name of the transformer
+    - the transformer itself
+    - the columns to apply the transformer to
+- makes a RF model
+- creates pipeline with above columnTransformer and model set as steps
+
+- pipeline method calls made to
+  - fit
+  - predict
+
+- actual ways to improve o0ther than just increasing n_estimators
+  - more max_depth
+  - SimpleImputer strategy set to median instead of constant
