@@ -296,3 +296,53 @@ print('MAE:', score)
 - actual ways to improve o0ther than just increasing n_estimators
   - more max_depth
   - SimpleImputer strategy set to median instead of constant
+
+# cross-validation
+- ML is iterative
+- repeatedly test and optimize which features to use, which models, which args to supply to models
+- typically 20% of dataset used to test
+- problem is no split is perfect, as there is variance, outliers, etc.
+- larger validation set: less randomness aka noise
+- Cross validation: run model on different subsets of data, cut data set into even pieces aka "folds"
+
+- when to use
+  - smaller data sets - can use CV
+  - computational burden
+  - larger data set use single validation
+
+- impl
+- use method cross_val_score from sklearn.model_selection
+  - args
+    - pipeline (preprocessor+model)
+    - X
+    - y
+    - cv (number of folds)
+    - scoring e.g. neg_mean_absolute_error
+
+  - if cv was 5 will give 5 scores, one for each fold
+
+# exercise - CV
+
+- step 1 - reads train/test
+- drops na columns on target
+- sets target to saleprice
+- drops target col from train data
+
+- filters out non-numeric data
+
+- step 2:  pipeline assignment
+  - simpleImputer used for preprocessing
+  - model set to RF
+
+
+- step 3 - CV
+```
+from sklearn.model_selection import cross_val_score
+
+# Multiply by -1 since sklearn calculates *negative* MAE
+scores = -1 * cross_val_score(my_pipeline, X, y,
+                              cv=5,
+                              scoring='neg_mean_absolute_error')
+
+print("Average MAE score:", scores.mean())
+```
