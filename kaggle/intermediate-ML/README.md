@@ -336,7 +336,7 @@ print('MAE:', score)
 
 
 - step 3 - CV
-```
+```py
 from sklearn.model_selection import cross_val_score
 
 # Multiply by -1 since sklearn calculates *negative* MAE
@@ -346,3 +346,15 @@ scores = -1 * cross_val_score(my_pipeline, X, y,
 
 print("Average MAE score:", scores.mean())
 ```
+
+# XG Boost
+
+- Gradient boosting:
+  - initialize with single model
+  - loop
+    - current ensemble model generates predictions
+    - calculate loss function like mean squared error
+    - fit new model to the residuals (the difference between the predictions and the actual values)
+      - use gradient descent to minimize the loss function
+    - add model to ensemble
+- XGBoost - name of library
