@@ -401,3 +401,20 @@ my_model.fit(X_train, y_train,
 - n_jobs
   - use parallelization to build faster
   - set to number of cores on machine
+
+# exercise: XGBoost
+
+- when loading data, new parameters have appeared
+  - train_test_split
+```py
+train_test_split(X, y, train_size=0.8, test_size=0.2, random_state=0)
+```
+- looking for low-cardinality columns (number of unique vals in col)
+```py
+low_cardinality_cols = [cname for cname in X_train_full.columns if X_train_full[cname].nunique() < 10 and
+                        X_train_full[cname].dtype == "object"]
+```
+- one-hot encodes with .get_dummies
+- also new, calls align on columns joining all left
+
+- the major part of the exercise is to "break" the model by setting n_estimators to 1, leading to very high MAE
