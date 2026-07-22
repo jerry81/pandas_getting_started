@@ -358,3 +358,46 @@ print("Average MAE score:", scores.mean())
       - use gradient descent to minimize the loss function
     - add model to ensemble
 - XGBoost - name of library
+  - Extreme Gradient Boosting
+```py
+from xgboost import XGBRegressor
+```
+
+- live example
+- read csv
+- pick cols, set to X
+- set target to y (price)
+- train_test_split
+- instantiate model XGBRegressor
+- has .fit method
+- and .predict
+- use mean_absolute_error(predictions,y_valid)
+
+- param tuning
+  - use n_estimators to decide how many times to go thru modeling cycle
+    - too low -> underfitting
+    - too high -> overfitting
+    - typically 100-1000
+  - early_stopping_rounds
+    - param for fit, automaticaly finds ideal val for n_estimators
+    - stop iterating when validation score stops improving for changing n_estimators
+    - strategy - start high, and use early stopping rounds
+    - i.e. setting to 5 means it will stop after 5 rounds of no improvement
+  - learning rate
+    - learning_rate allows you to set a multiplier to the predictions from each component model
+    - the multiplier may be less than 1, which means each component model contributes less to the final prediction, which means less chance for overfitting with high n_estimators
+    - small learning rate, large n-estimators for more accuracy
+    - default .1
+- usage
+```py
+my_model = XGBRegressor(n_estimators=500)
+my_model.fit(X_train, y_train,
+             early_stopping_rounds=5,
+             eval_set=[(X_valid, y_valid)],
+             verbose=False)
+
+```
+
+- n_jobs
+  - use parallelization to build faster
+  - set to number of cores on machine
