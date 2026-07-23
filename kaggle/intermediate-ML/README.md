@@ -418,3 +418,92 @@ low_cardinality_cols = [cname for cname in X_train_full.columns if X_train_full[
 - also new, calls align on columns joining all left
 
 - the major part of the exercise is to "break" the model by setting n_estimators to 1, leading to very high MAE
+
+# Data Leakage
+
+- data leakage is when training data has info about target different for validation
+- leads to high performance on training (and even validation) but poorly on test
+- makes model look accurate until production
+
+- happens frequently
+- ruins models in dangerous ways
+
+- 2 kinds of leakage
+  1. target leakage
+    - when training data has info about target that would not be available at prediction time
+    - example: predicting if a patient has diabetes, but training data includes a column for whether the patient is taking insulin (which is only prescribed to diabetics)
+      - think about it in terms of timing or chronological order when data becomes available
+        - for example, got sick and took medicine - took medicine only happens when got sick, so correlation between took medicine got sick is established
+          - but on test data, one may have not taken medicine yet but got sick, so the model would fail to predict correctly
+      - prevention: identify columns such as taken medicine and remove them
+  2. train-test contamination
+    - when validation data is used in training, or when validation data is used to make decisions about the model (like feature selection)
+      - e.g. of when it occurs - imputed data before running train_test_split
+        - leads to validation data effecting the model after training, when it should have only been trained on training data
+      - leads to model doing poorly on new data
+      - more important when you do cross-validation, since the validation data is used multiple times to make decisions about the model
+- target leakage impl example: detect and remove
+- they test cross validation accuracy with
+```py
+cv_scores = cross_val_score(my_pipeline, X, y,
+                            cv=5,
+                            scoring='accuracy')
+
+print("Cross-validation accuracy: %f" % cv_scores.mean())
+```
+- their example printed .98 which is suspiciously high
+
+- lists columns: we should identify suspicious columns
+- target is card: if credit card application accepted
+- majorcards - number of Credit cards held - suspicious
+- active - number of active credit cards - suspicious
+
+- but my guess was wrong: expidenture - avg monthly credit card expidenture is actually the right answer, as those with no card had 0 expedenture, while most who had a card had expedentures
+- the data leak here is that those who applied for a card ended up with expedentures on it
+
+- i wasn't totally wrong, as active and majorcards were dropped too!
+```py
+# Drop leaky predictors from dataset
+potential_leaks = ['expenditure', 'share', 'active', 'majorcards']
+X2 = X.drop(potential_leaks, axis=1)
+
+# Evaluate the model with leaky predictors removed
+cv_scores = cross_val_score(my_pipeline, X2, y,
+                            cv=5,
+                            scoring='accuracy')
+
+print("Cross-val accuracy: %f" % cv_scores.mean())
+```
+
+- accuracy ends up around 80%, but it is much more realistic than the 98% accuracy with the leaky columns
+
+## exercise: data leakage
+- dealing with shoelaces now
+  - target - how many shoelaces needed
+  - cols current month, ad expenditures, macroeconomic features (unemp rate), amt of leather used
+  - leather used is suspicious - but depends on after or before orders went in
+
+- dealing with crypto
+  - tgt: price of crypto one day later
+  - features: cur price, amt sold 24 hrs, 24 hr change, 1 hr change, new tweets 24 hrs mentioning currency
+  - actually no leakage, problem is shouldn't target price day later, but change day later - b/c tomorrow's price alone in a vacuum is not useful
+
+- preventing infections
+  - goal: predict infection risks
+    - tgt: infection or no
+    - feature: surgeon  who did surgery
+    - idea: infection rate for each surgeon
+    - put the rate in as a feature
+  - risks
+    - infection ambiguous - preexisting or specifically happened during surgery
+    - train test contamination risk: in preprocessing of calc surgeon infection rate, used all data instead of just trianing data
+
+- housing prices
+  - given the following features
+```
+Size of the house (in square meters)
+Average sales price of homes in the same neighborhood
+Latitude and longitude of the house
+Whether the house has a basement
+```
+- which is a risk - 2 because it is unsure if it is updated
