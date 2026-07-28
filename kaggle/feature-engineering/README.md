@@ -88,3 +88,7 @@ mi_scores[::3]  # show a few features with their MI scores
 
 ### MI: exercise
 
+- ames data source
+- ranked MI scores
+- investigate relation of a categorical feature: building type
+- then look at building type together with feature grlivarea, and mosold
