@@ -161,4 +161,14 @@ mi_scores[::3]  # show a few features with their MI scores
 
 ## exercise: creating features
 
--
+- made a mistake when doing counting feature exercise
+```py
+X_3["PorchTypes"] = X["WoodDeckSF", "OpenPorchSF", "EnclosedPorch", "Threeseasonporch", "ScreenPorch"].gt(0).sum(axis=1) # incorrect
+X_3["PorchTypes"] = X[["WoodDeckSF", "OpenPorchSF", "EnclosedPorch", "Threeseasonporch", "ScreenPorch"]].gt(0).sum(axis=1) # correct
+```
+
+- made mistake when solving grouped transform with requirement "The value of a home often depends on how it compares to typical homes in its neighborhood. Create a feature MedNhbdArea that describes the median of GrLivArea grouped on Neighborhood."
+```py
+X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('mean') # incorrect
+X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('median') # correct
+```
