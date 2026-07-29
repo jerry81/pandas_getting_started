@@ -92,3 +92,73 @@ mi_scores[::3]  # show a few features with their MI scores
 - ranked MI scores
 - investigate relation of a categorical feature: building type
 - then look at building type together with feature grlivarea, and mosold
+
+## creating features
+
+- previous: identified features useful
+- now: start developing them - will learn transformations on features
+- going to use 4 datasets: US Traffic accidents, 1985 automobiles, Concrete Formulations, Customer Lifetime Value
+- tips
+  - understand features - read dataset docu if available
+  - research problem domain and gain domain knowledge
+  - study others' models
+  - use data visualizations to reveal anomolies and relationships
+
+- mathematical transformations
+  - 2 or more numerical features can be transformed into new feature with math
+    ```py
+      autos["stroke_ratio"] = autos.stroke / autos.bore
+    ```
+  - more complicated combination -> more difficult for model to learn
+    ```py
+      autos["displacement"] = ( np.pi * ((0.5 * autos.bore) ** 2) * autos.stroke * autos.num_of_cylinders )
+    ```
+  - sometimes skewed data should be normalized with a logarithm
+    ```py
+      accidents["LogWindSpeed"] = accidents.WindSpeed.apply(np.log1p)
+    ```
+
+
+- counts
+  - a feature that describes absence or presence of something (boolean or binary) come in sets that can be tallied (use sum())
+    ```py
+      roadway_features = ["Amenity", "Bump", "Crossing", "GiveWay", "Junction", "NoExit", "Railway", "Roundabout", "Station", "Stop", "TrafficCalming", "TrafficSignal"]
+      accidents["RoadwayFeatureCount"] = accidents[roadway_features].sum(axis=1)
+    ```
+  - same technique can be used for continuous data, treating 0.0 as false and any other value as true
+
+- build up and break down
+  - complex strings can be broken down to simpler pieces, for example
+    - ID numbers: '123-45-6789' -> '123', '45', '6789'
+    - phone numbers: '(123) 456-7890' -> area code, number
+    - street address: '123 Main St, Springfield, IL 62701' -> '123', 'Main St', 'Springfield', 'IL', '62701'
+    - urls
+    - product codes
+    - date and time
+  - can use split to help with this
+    ```py
+      customer[['type', 'level']] = ( customer["Policy"].str.split(' ', expand=True)) # "Corporate L3" -> "Corporate", "L3"
+    ```
+  - build up is just the opposite, composing multiple features into one
+  - data types that require more study: dates, geolocation
+
+- group transforms
+  - aggregate info across multiple rows grouped by some category
+    - e.g. "average income of person's state of residence"
+      ```py
+        customer["AverageIncome"] = ( customer.groupby('State')['Income'].transform('mean'))
+      ```
+  - available transform functions
+    - mean, median, min, max, sum, count, std, var, sem, first, last, nth
+
+  - parting tips
+    - linear models learn sums and diffs naturally
+    - ratios give models trouble
+    - linear models do better with normalized features
+      - neural nets want values close to 0
+    - tree-based models can deal with approximating combination of features, but may benefit from creating combination features
+    - counts helpful for tree models since they can't naturally aggregate info
+
+## exercise: creating features
+
+-
