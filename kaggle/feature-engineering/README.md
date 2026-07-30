@@ -172,3 +172,74 @@ X_3["PorchTypes"] = X[["WoodDeckSF", "OpenPorchSF", "EnclosedPorch", "Threeseaso
 X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('mean') # incorrect
 X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('median') # correct
 ```
+
+## cluster with k-means
+
+- intro
+  - will talk about unsupervised learning algorithms
+    - a "feature discovery" technique
+    - doesn't use target
+    - learn property of data
+  - clustering
+    - group data points into clusters based on similarity
+    - k-means clustering is a popular algorithm for this
+    - examples
+      - groups of customers representing market segment
+      - geo areas with similar weather patterns
+- cluster labels as feature
+  - applied to single feature - traditional "binning"
+  - applied to multiple features - "multi-dimensional binning"
+  - studying some illustrations and tables
+    - it appears we add a categorical feature "cluster" whose values are the cluster number, assigned to each data point
+    - also can use one-hot encoding
+    - clustering can break a curve into chunhks of linear relationships, which is useful for linear models
+- k-means clustering
+  - there are many clustering algorithms
+  - differ in how they measure similarity and proximity
+  - k-means clustering
+    - measures similarity by euclidean distance
+    - puts "centroids" or points around the feature space
+    - the centroid they are closest to is the cluster they belong to
+  - impl: we focus on 3 params (scikit-learn)
+    - n_clusters: number of clusters to form
+    - max_iter: maximum number of iterations of the k-means algorithm for a single run
+    - n_init: number of times the algorithm will run with different centroid seeds, and the best output is chosen
+    - 2 step loop (which max_iter controls)
+      1.  assign points to nearest cluster centroid
+      2.  move centroids to minimize distance to points
+    - as the algorihtm iterates, points shift between clusters
+    - normally we only are concered with n_clusters
+- example - california housing
+  - latitude and longitude are good candidates for KMC,
+  - cluster them with medInc (median income) to create clusters
+  - so 3 features used, but as many features as you want can be used
+  ```py
+    X = df.loc[:, ["MedInc", "Latitude", "Longitude"]]
+    # Create cluster feature
+    kmeans = KMeans(n_clusters=6)
+    X["Cluster"] = kmeans.fit_predict(X)
+    X["Cluster"] = X["Cluster"].astype("category")
+
+    X.head()
+  ```
+
+## exercise - scaling features
+
+- frst step: setup
+  - defines score_dataset
+  - reads csv file
+
+- scaling features
+  - mentions that KMC is sensitive to scale of features
+  - asks us to examine some features and termine if they should be rescaled
+    - latitude and longitude - no - because don't want to distort distances
+    - lot area and living area - either way - living area more valuable per area
+    - number of doors and horsepower - should be scaled - no comparable units - num of doors would have negligible effect on weighting compared to horsepower
+
+- create feature of cluster labels
+  - tells us to create k-means clustering with some params with 10 clusters and 10 iterations
+  - made a mistake - used max_iter=10 instead of n_init=10
+
+- cluster-distance features
+  - introduces new concept - distance to cluster centroid
+    - use fit_transform to utlize this
