@@ -243,3 +243,52 @@ X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('median') 
 - cluster-distance features
   - introduces new concept - distance to cluster centroid
     - use fit_transform to utlize this
+
+## principal component analysis
+
+- like partitioning of variation in data
+- working with abolone data set
+- "axes of variation" - appear as perpendicular lines along natural dimensions of data, one per feature
+- e.g. original features, height and diameter
+  - height/diameter normal linear relationship -> "size"
+  - height/diameter inverse linear relationship -> "shape"
+- principle components would be size vs shape plot
+- more metrics: explained variance ratio - how much of the variation in the data is explained by each principle component
+- application
+  - use as descriptive teqniques, e.g. - compute MI scores for components and see what kind of variation is most predictive of target - then proceed to cluster on those components
+  - use principal components as features
+    - drop original features and use components as features - dimensionality reduction
+    - anomaly detection
+    - noise reduction
+    - de-correlation - for models that struggle with highly-correlated features
+- final notes
+  - only works with numeric features
+  - sensitive to scale
+  - outliers bad - remove or constrain them
+- example: automobiles
+  - tgt price
+  - four features: highway-mpg, engine size, horsepower, curb weight
+  - standardization done by dividing the column value minus the column's mean  by the standard deviation of the values in that column
+  - sklearn.decomposition privdes PCA class
+    - pca.fit_transform(X) to get transformed data
+  - negative signs in components mean that the feature is inversely related to the component
+  - pca.fit_transform gives "loadings" - the weights of each feature in each component - can be used to interpret the components
+  - the weights can be further analyzed by calculating Mutual information scores from them
+
+## excersize - PCA
+
+- working with houses again
+- 4 features - garageArea, yearRemodAdd, TotalBsmtSF, GrLivArea
+- corrwith - comes with DataFrame - computes pairwise correlation of columns with another series
+- target popped
+- apply_pca helper
+  - standardize
+  - fit_transform with pca
+  - put result into dataframe
+  - return loadings
+- interpret the PCX/feature matrix
+  - what do PC1 and PC3 represent
+   - PC1 consistently positive around .5 - means something like a "size" component
+   - PC3 - 2 almost zero, one positive, one negative  - unclear
+- next question - identify reasons for outliers
+  - some houses don't have garage and/or basement
