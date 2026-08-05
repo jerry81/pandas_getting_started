@@ -292,3 +292,23 @@ X_5["MedNhbdArea"] = X.groupby("Neighborhood")['GrLivArea'].transform('median') 
    - PC3 - 2 almost zero, one positive, one negative  - unclear
 - next question - identify reasons for outliers
   - some houses don't have garage and/or basement
+
+## Target Encoding
+
+- meant for categorical features
+- supervised feature engineering technique
+  - also uses target to encode
+- definition: encoding that replaces categories with some number derived from target
+- simple version: apply aggregation like mean
+- example - make new feature that is mean of a group's (automobile make) target (price) value
+```py
+autos["make_encoded"] = autos.groupby("make")["price"].transform("mean")
+
+autos[["make", "price", "make_encoded"]].head(10)
+```
+- prev example is also known as mean encoding
+- in binary targets, it's called bin counting
+- other types
+  - likelihood encoding
+  - impact encoding
+  - leave-one-out encoding
