@@ -312,3 +312,27 @@ autos[["make", "price", "make_encoded"]].head(10)
   - likelihood encoding
   - impact encoding
   - leave-one-out encoding
+- issues
+  - prone to overfitting
+  - dealing with unknown categories
+  - rare categories
+- solution
+  - smoothing - blend in-category avg with overall avg
+  - encoding = weight * in_category + (1 - weight) * overall
+  - weight = n / (n+m) where n is number of samples in category and m is a hyperparameter
+    - larger m -> more smoothing
+- good for
+  - high-cardinality features - large number of categories
+  - domain-motivated features
+- example - Movie Ratings
+  - 3000 categories in zipcodes
+    - good candidate for target encoding (high cardinality)
+  - from category_encoders import MEstimateEncoder
+  - encoder = MEstimateEncoder(cols=["zipcode"], m=5)
+  - encoder.fit(X_train, y_train)
+
+## exercise - target encoding
+- lists out all categorical (object) features, and lists nunique() - number of unique values
+- futher inspects a single feature (with nunique == 10) using value_counts() to list all the unique values and their counts
+- guessing larger nunique counts better for tgt encoding
+- exploring overfitting: fit encoder and model on same dataset
