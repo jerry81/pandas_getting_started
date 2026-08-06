@@ -336,3 +336,143 @@ autos[["make", "price", "make_encoded"]].head(10)
 - futher inspects a single feature (with nunique == 10) using value_counts() to list all the unique values and their counts
 - guessing larger nunique counts better for tgt encoding
 - exploring overfitting: fit encoder and model on same dataset
+
+## final exam from ChatGPT
+
+1.  Question 1 — Feature Engineering Philosophy
+
+You learned:
+
+"The goal of feature engineering is to make data better suited to the problem."
+
+A colleague says:
+
+"Feature engineering is cheating. If humans create better features, then the model isn't really learning anymore. We are just manually finding the answer."
+
+Do you agree or disagree?
+
+Explain why.
+
+- disagree - we are not just manually finding the answer as that would imply we found a function that solves every possible target guess but rather optimizing the model.
+
+2.  Question 2 — Mutual Information
+
+Suppose you have a dataset predicting whether a customer will cancel a subscription.
+
+You calculate mutual information scores:
+
+Feature A: 0.82
+Feature B: 0.03
+Feature C: 0.00
+
+A colleague says:
+
+"Feature A has the highest MI score, therefore Feature A is the cause of cancellation."
+
+Do you agree? Why or why not?
+
+- disagree - a correlation has been found in feature A, which is not equivalent to causation.  Also there could be hidden correlations in feature B and C after some further transformations such as PCA or clustering
+
+3.  Question 3 — Target Encoding
+
+You have a categorical feature:
+
+neighborhood
+
+A
+B
+C
+
+You want to predict house price.
+
+Someone suggests:
+
+"For each neighborhood, replace it with the average house price in that neighborhood."
+
+Example:
+
+A → $800,000
+B → $500,000
+C → $300,000
+
+Why is this a powerful technique, and why is it dangerous? Explain both sides.
+
+- It is powerful because it changes the categorical data to numerical making it potentially more useful and better suited for the model. It is dangerous because without a sufficient fitting sample, it may overfit. Also it is prone to other polluters like outliers.
+- feedback: target leakage is the key point i missed - when training data is leaked into the encoding data
+
+4.  Question 4 — K-means Clustering
+
+You have customer data:
+
+age
+income
+spending score
+
+You run:
+
+kmeans = KMeans(n_clusters=3)
+clusters = kmeans.fit_predict(X)
+
+Explain:
+
+What does fit() learn?
+What does predict() return?
+Why would scaling the features be important before K-means?
+
+- fit actually will create the centroids
+- predict then assigns each sample to the nearest centroid
+- scaling features is important in clustering because the distance metric is sensitive to scale.  If one feature has a much larger range than another, it will dominate the distance calculation and skew the clustering results.
+
+5.  Question 5 — PCA Axes of Variation
+
+You have a dataset with two features:
+
+height
+weight
+
+You plot the data and see that taller people almost always weigh more.
+
+PCA creates:
+
+PC1 = 0.7 * height + 0.7 * weight
+
+PC2 = 0.7 * height - 0.7 * weight
+
+Explain:
+
+What does PC1 represent?
+What does PC2 represent?
+Why are PC1 and PC2 perpendicular (orthogonal)?
+
+- pc1 represents size, the positive linear correlation between height and weight
+- pc2 represents shape, the inverse relationship between height and weight
+- they are perpendicular because they are uncorrelated, and PCA finds the axes of maximum variance in the data, which are orthogonal to each other.
+
+6.  Question 6 — Putting It Together
+
+You are given a dataset of customer behavior:
+
+customer_id
+age
+income
+country
+number_of_purchases
+
+Target:
+
+will_cancel_subscription
+
+You notice:
+
+country has 5000 unique values
+customer_id has 1 unique value per customer
+income has extreme outliers
+age and income are correlated
+
+Describe what feature engineering techniques you would consider and which ones you would avoid, and explain why.
+
+- i would consider targetencoding for country since it has high cardinality
+- customer_id i would consider dropping for training - since by domain knowledge it is not likely predictive of the outcome
+- income i would either scale or drop because outliers may skew the model
+  - feedback - not scale, but logarithm or standardization
+- age and income are correlated, so i would consider PCA to reduce dimensionality and remove correlation
