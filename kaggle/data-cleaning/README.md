@@ -47,3 +47,12 @@ nfl_data.dropna(axis=1)
 ```py
 nfl_data.fillna(0)
 ```
+
+- fill missing values with value that comes next
+  - fillna(method='bfill')
+
+
+## exercise 1: missing values
+
+- note that result of dropna is the resulting dataframe, not the removed rows
+- also note that in the bfill method we should be using axis=0 to fill down the rows, not across the columns
